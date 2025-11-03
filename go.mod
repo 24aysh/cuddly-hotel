@@ -10,6 +10,11 @@ require (
 )
 
 require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golang-jwt/jwt/v5 v5.3.0
+)
+
+require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/golang/snappy v1.0.0 // indirect; indirectS
 	github.com/google/uuid v1.6.0 // indirect
