@@ -48,7 +48,7 @@ func (h *AuthHandler) HandleAuthenticate(c *fiber.Ctx) error {
 		return fmt.Errorf("auth failed")
 	}
 	fmt.Println("Auth success")
-	token := craeteTokenFromUser(*user)
+	token := CreateTokenFromUser(*user)
 
 	return c.JSON(AuthResponse{
 		User:  user,
@@ -56,7 +56,7 @@ func (h *AuthHandler) HandleAuthenticate(c *fiber.Ctx) error {
 	})
 }
 
-func craeteTokenFromUser(user types.User) string {
+func CreateTokenFromUser(user types.User) string {
 	now := time.Now()
 	expires := now.Add(time.Hour * 24).Unix()
 	claims := jwt.MapClaims{
@@ -67,7 +67,7 @@ func craeteTokenFromUser(user types.User) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	secret := os.Getenv("JWT_SECRET")
 	tokenStr, err := token.SignedString([]byte(secret))
-	if err != nil { 
+	if err != nil {
 		fmt.Println("Failed to sign token with secret")
 	}
 	return tokenStr

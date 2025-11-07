@@ -25,6 +25,7 @@ type CreateUserParams struct {
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
+	IsAdmin   bool   `json:"isAdmin"`
 }
 
 type User struct {
@@ -33,6 +34,7 @@ type User struct {
 	LastName    string        `bson:"lastName" json:"lastName"`
 	Email       string        `bson:"email" json:"email"`
 	EncPassword string        `bson:"EncPassword" json:"-"`
+	IsAdmin     bool          `bson:"isAdmin" json:"isAdmin"`
 }
 
 func (p UpdateUserParams) ToBSON() bson.M {

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"hotel-reservation/api"
 	"hotel-reservation/db"
 	"hotel-reservation/types"
 	"log"
@@ -19,7 +21,7 @@ var (
 	hotelStore db.HotelStore
 )
 
-func seedUser(email, fname, lname string) {
+func seedUser(isAdmin bool, email, fname, lname string) {
 	user, err := types.NewUserFromParams(types.CreateUserParams{
 		FirstName: fname,
 		LastName:  lname,
@@ -29,10 +31,12 @@ func seedUser(email, fname, lname string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	user.IsAdmin = isAdmin
 	_, err = userStore.InsertUser(context.Background(), user)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("%s -> %s\n", user.Email, api.CreateTokenFromUser(*user))
 
 }
 
@@ -82,7 +86,9 @@ func main() {
 	}
 	seedHotel("Angela white", "Use me", 5)
 	seedHotel("Cumatoz", "Russia", 5)
-	seedUser("james@gmail.com", "james", "in the ass")
+	seedUser(false, "james@gmail.com", "james", "in the ass")
+	seedUser(true, "angel@gmail.com", "angel", "on my dick")
+
 }
 
 func init() {

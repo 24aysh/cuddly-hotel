@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"hotel-reservation/db"
 	"os"
 	"time"
 
@@ -9,20 +10,29 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func JWTAuthentication(c *fiber.Ctx) error {
-	token, ok := c.GetReqHeaders()["Token"]
-	if !ok {
-		return nil
+func JWTAuthentication(userstore db.UserStoreInterface) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		token, ok := c.GetReqHeaders()["Token"]
+		if !ok {
+			return nil
+		}
+		claims, err := validateToken(token[0])
+		if err != nil {
+			return err
+		}
+		expires := int64(claims["expires"].(float64))
+		if time.Now().Unix() > expires {
+			return fmt.Errorf("token expired")
+		}
+		userID := claims["id"].(string)
+		user, err := userstore.GetUserByID(c.Context(), userID)
+		if err != nil {
+			return fmt.Errorf("not authorized")
+		}
+		c.Context().SetUserValue("user", user)
+		return c.Next()
 	}
-	claims, err := validateToken(token[0])
-	if err != nil {
-		return err
-	}
-	expires := int64(claims["expires"].(float64))
-	if time.Now().Unix() > expires {
-		return fmt.Errorf("token expired")
-	}
-	return c.Next()
+
 }
 func validateToken(tokenStr string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {

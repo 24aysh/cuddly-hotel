@@ -6,7 +6,8 @@ const (
 )
 
 type Store struct {
-	User  UserStoreInterface
-	Hotel HotelStore
-	Room  RoomStore
+	User    UserStoreInterface
+	Hotel   HotelStore
+	Room    RoomStore
+	Booking BookingStore
 }
